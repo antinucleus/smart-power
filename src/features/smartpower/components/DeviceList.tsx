@@ -1,5 +1,5 @@
 import React from 'react';
-import {FlatList} from 'react-native';
+import {FlatList, StyleSheet} from 'react-native';
 import {BluetoothDevice} from 'react-native-bluetooth-classic';
 
 import {DeviceListItem} from './DeviceListItem';
@@ -16,9 +16,16 @@ export const DeviceList = ({devices}: DeviceListProps): JSX.Element => {
 
   return (
     <FlatList
+      style={styles.container}
       data={devices}
       keyExtractor={item => item.id.toString()}
       renderItem={_renderItem}
     />
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+  },
+});

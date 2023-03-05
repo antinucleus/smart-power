@@ -44,7 +44,6 @@ const styles = StyleSheet.create({
   },
   info: {
     marginVertical: 10,
-    marginHorizontal: 10,
     borderRadius: 10,
     padding: 5,
     borderWidth: 1,

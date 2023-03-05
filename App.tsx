@@ -1,14 +1,20 @@
 import React from 'react';
-import {SafeAreaView} from 'react-native';
+import {SafeAreaView, StyleSheet} from 'react-native';
 
 import {Routes} from './src/routes';
 
 function App(): JSX.Element {
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={styles.container}>
       <Routes />
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
 
 export default App;

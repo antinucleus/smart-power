@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import BluetoothClassic from 'react-native-bluetooth-classic';
 import {StateChangeEvent} from 'react-native-bluetooth-classic/lib/BluetoothEvent';
 
@@ -8,16 +8,15 @@ import {
   checkLocationState,
 } from '../../../utils';
 import {ListBluetoothDevices} from '../components/ListBluetoothDevices';
-import {useBluetoothDeviceStore} from '../stores/bluetoothDeviceStore';
+import {useBluetoothState} from '../stores';
 
 export const BluetoothDevices = (): JSX.Element => {
-  const [bluetoothEnabled, setBluetoothEnabled] = useState<boolean>(false);
-  const {selectedDevice} = useBluetoothDeviceStore();
+  const {enabled, setEnabled} = useBluetoothState();
 
   const handleBluetoothState = (event: StateChangeEvent) => {
     console.log('[StateChangeEvent]', event);
 
-    setBluetoothEnabled(event.enabled);
+    setEnabled(event.enabled);
   };
 
   useEffect(() => {
@@ -31,9 +30,7 @@ export const BluetoothDevices = (): JSX.Element => {
       }
     });
 
-    checkBluetoothState(bluetoothStatus =>
-      setBluetoothEnabled(bluetoothStatus),
-    );
+    checkBluetoothState(bluetoothStatus => setEnabled(bluetoothStatus));
 
     checkLocationState(locationStatus => console.log({locationStatus}));
 
@@ -50,7 +47,7 @@ export const BluetoothDevices = (): JSX.Element => {
   }, []);
 
   useEffect(() => {
-    console.log({bluetoothEnabled});
-  }, [bluetoothEnabled]);
+    console.log({enabled});
+  }, [enabled]);
   return <ListBluetoothDevices />;
 };

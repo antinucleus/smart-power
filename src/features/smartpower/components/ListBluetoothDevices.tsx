@@ -1,12 +1,17 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import BluetoothClassic, {
   BluetoothDevice,
 } from 'react-native-bluetooth-classic';
-import {Button, View} from 'react-native';
+import {StyleSheet, View, ToastAndroid} from 'react-native';
 
 import {DeviceList} from './DeviceList';
 import {Connection} from './Connection';
-import {useBluetoothDeviceStore} from '../stores';
+import {useBluetoothDeviceStore, useBluetoothState} from '../stores';
+import {CustomButton} from '../../../components';
+
+/*
+ * NOTE: When clicked discovery button check location status on android 12(API31)
+ */
 
 export const ListBluetoothDevices = (): JSX.Element => {
   const [bondedDevices, setBondedDevices] = useState<BluetoothDevice[]>([]);
@@ -15,11 +20,30 @@ export const ListBluetoothDevices = (): JSX.Element => {
   );
   const [discovering, setDiscovering] = useState<boolean>(false);
   const {selectedDevice} = useBluetoothDeviceStore();
+  const {enabled} = useBluetoothState();
 
   const getBondedDevices = async () => {
+    console.log('[Invoked @getBondedDevices]');
     try {
-      const bondedDevicesList = await BluetoothClassic.getBondedDevices();
-      setBondedDevices(bondedDevicesList);
+      console.log('ENABLED:', enabled);
+      if (enabled) {
+        const bondedDevicesList = await BluetoothClassic.getBondedDevices();
+        setBondedDevices(bondedDevicesList);
+      } else {
+        try {
+          await BluetoothClassic.requestBluetoothEnabled();
+        } catch (error) {
+          ToastAndroid.show(
+            'Please enable bluetooth device',
+            ToastAndroid.LONG,
+          );
+
+          console.log(
+            '[Error occured at (enable bluetooth) function @ListBluetoothDevices]',
+            error,
+          );
+        }
+      }
     } catch (error) {
       setBondedDevices([]);
       console.log(
@@ -31,12 +55,6 @@ export const ListBluetoothDevices = (): JSX.Element => {
 
   const startDiscovery = async () => {
     try {
-      // let granted = await requestAccessFineLocationPermission();
-
-      // if (!granted) {
-      //   throw new Error('Access fine location was not granted');
-      // }
-
       setDiscovering(true);
 
       let currentDevices = [...discoveredDevices];
@@ -68,26 +86,45 @@ export const ListBluetoothDevices = (): JSX.Element => {
     }
   };
 
+  useEffect(() => {
+    getBondedDevices();
+  }, [enabled]);
+
   return (
-    <View style={{flex: 1}}>
-      <View>
-        <Button onPress={getBondedDevices} title="Get Bonded Devices" />
-        <Button
-          onPress={startDiscovery}
-          title={`Discover Devices ${discovering ? '(Discovering..)' : ''}`}
-        />
-      </View>
+    <View style={styles.container}>
       {selectedDevice ? (
         <Connection />
       ) : (
-        <DeviceList
-          devices={
-            !discovering && discoveredDevices.length !== 0
-              ? discoveredDevices
-              : bondedDevices
-          }
-        />
+        <>
+          <View style={styles.discoverButton}>
+            <CustomButton
+              loading={discovering}
+              color="blue"
+              title="Discover Devices"
+              onPress={startDiscovery}
+            />
+          </View>
+          <DeviceList
+            devices={
+              !discovering && discoveredDevices.length !== 0
+                ? discoveredDevices
+                : bondedDevices
+            }
+          />
+        </>
       )}
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  discoverButton: {
+    width: '50%',
+    justifyContent: 'center',
+  },
+});

@@ -13,8 +13,10 @@
     "react": "18.2.0",
     "react-native": "0.71.3",
     "react-native-bluetooth-classic": "^1.60.0-rc.25",
+    "react-native-chart-kit": "^6.12.0",
     "react-native-device-info": "^10.4.0",
     "react-native-permissions": "^3.7.3",
+    "react-native-svg": "^13.8.0",
     "zustand": "^4.3.5"
   },
   "devDependencies": {
