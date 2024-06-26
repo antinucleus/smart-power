@@ -25,11 +25,6 @@ Smart plug project link: https://github.com/antinucleus/smart-plug
 
 ## Screenshots
 
-<h4 align="center">
-  Demo
-</h4>
-
-
 <div style="display:flex;" align="center">
   <img src="https://github.com/antinucleus/repo-medias/blob/main/smart-power/open-bluetooh.jpg" width="400"/>  
   &nbsp;&nbsp;&nbsp;
